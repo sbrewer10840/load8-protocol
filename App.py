@@ -1,4 +1,38 @@
 import streamlit as st
+
+def check_password():
+    """Returns True if the user had the correct password."""
+    def password_entered():
+        if st.session_state["password"] == st.secrets["APP_PASSWORD"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input(
+            "Password required for the Load 8 Protocol", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password incorrect, show input + error.
+        st.text_input(
+            "Password required for the Load 8 Protocol", type="password", on_change=password_entered, key="password"
+        )
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
+
+if not check_password():
+    st.stop()
+
+# --- YOUR ACTUAL APP CODE GOES BELOW HERE ---
+st.title("Load 8 Protocol — Secure Dashboard")
+
+import streamlit as st
 import pandas as pd
 from datetime import date, timedelta
 
